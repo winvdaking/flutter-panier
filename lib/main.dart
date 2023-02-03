@@ -33,18 +33,18 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(
-        title: 'Flutter Demo Home Page',
-        fruits: fruits,
+      home: MyHomePage(
+        title: 'Total panier :',
+        lesFruits: fruits,
       ),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title, required this.fruits});
+  const MyHomePage({super.key, required this.title, required this.lesFruits});
   final String title;
-  final List<Fruit> fruits;
+  final List<Fruit> lesFruits;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -59,23 +59,24 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  List<Fruit> lesFafficher = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text('${widget.title} $_counter€'),
+        centerTitle: true,
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'Clique',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
+            ...lesFafficher.map((e) => ListTile(
+                  tileColor: e.color,
+                  title: Text(e.name),
+                  hoverColor: const Color.fromRGBO(0, 0, 0, .5),
+                ))
           ],
         ),
       ),

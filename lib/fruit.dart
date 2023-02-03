@@ -8,10 +8,9 @@ class Fruit {
   Fruit(this.name, this.price, this.color);
 }
 
+// class FruitWidget extends StatelessWidget {
+//   const FruitWidget({super.key});
 
-class FruitWidget extends StatelessWidget {
-  const FruitWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {}
-}
+//   @override
+//   Widget build(BuildContext context) {}
+// }
