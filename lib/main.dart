@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:panier/fruit.dart';
+import 'package:panier/screens/fruitdetail.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -59,8 +60,15 @@ class FruitMaster extends StatefulWidget {
 
 class _FruitMasterState extends State<FruitMaster> {
   double _total = 0;
+  final PageController _pageController = PageController();
 
   late List<Fruit> lesFruits;
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -85,34 +93,59 @@ class _FruitMasterState extends State<FruitMaster> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('${widget.title} $_total'),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: ListView.builder(
-            itemCount: lesFafficher.length,
-            itemBuilder: (context, index) {
-              final Fruit currentFruit = lesFafficher[index];
-              return FruitPreview(
-                  unFruit: currentFruit, onFruitClick: _fruitClickAdd);
-            }),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _addFruit(),
-        tooltip: 'Ajout d\'un fruit',
-        child: const Icon(Icons.add),
-      ),
-    );
+        appBar: AppBar(
+          title: Text('${widget.title} $_total'),
+          centerTitle: true,
+        ),
+        body: PageView(
+          controller: _pageController,
+          children: [
+            Center(
+              child: ListView.builder(
+                  itemCount: lesFafficher.length,
+                  itemBuilder: (context, index) {
+                    final Fruit currentFruit = lesFafficher[index];
+                    return FruitPreview(
+                      unFruit: currentFruit,
+                      onFruitClick: _fruitClickAdd,
+                      pageController: _pageController,
+                    );
+                  }),
+            ),
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  if (_pageController.hasClients) {
+                    _pageController.animateToPage(
+                      0,
+                      duration: const Duration(milliseconds: 400),
+                      curve: Curves.easeInOut,
+                    );
+                  }
+                },
+                child: const Text('Previous'),
+              ),
+            ),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => _addFruit(),
+          tooltip: 'Ajout d\'un fruit',
+          child: const Icon(Icons.add),
+        ));
   }
 }
 
 class FruitPreview extends StatelessWidget {
   const FruitPreview(
-      {super.key, required this.unFruit, required this.onFruitClick});
+      {super.key,
+      required this.unFruit,
+      required this.onFruitClick,
+      required this.pageController});
 
   final Fruit unFruit;
   final Function onFruitClick;
+  final PageController pageController;
 
   @override
   Widget build(BuildContext context) {
@@ -121,6 +154,14 @@ class FruitPreview extends StatelessWidget {
         title: Text(unFruit.name),
         hoverColor: const Color.fromRGBO(0, 0, 0, .5),
         leading: Image.asset(unFruit.url),
-        onTap: () => onFruitClick(unFruit));
+        onTap: () {
+          if (pageController.hasClients) {
+            pageController.animateToPage(
+              1,
+              duration: const Duration(milliseconds: 400),
+              curve: Curves.easeInOut,
+            );
+          }
+        });
   }
 }
