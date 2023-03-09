@@ -1,5 +1,6 @@
-import 'dart:math';
+import 'dart:convert';
 
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:panier/fruit.dart';
 import 'package:panier/fruitpreview.dart';
@@ -19,7 +20,8 @@ class _FruitMasterState extends State<FruitMaster> {
   double _total = 0;
   String _title = 'Total panier : 0€';
   final PageController _pageController = PageController();
-  late List<Fruit> lesFruits;
+  late Future<List<Fruit>> lesFruitsFuture;
+  late List<Fruit> lesFruits = [];
   late List<Fruit> fruitAuPanier = [];
 
   @override
@@ -30,14 +32,8 @@ class _FruitMasterState extends State<FruitMaster> {
 
   @override
   void initState() {
-    lesFruits = widget.lesFruits;
+    lesFruitsFuture = fetchFruit();
     super.initState();
-  }
-
-  void _addFruit() {
-    setState(() {
-      lesFafficher.add(lesFruits[Random().nextInt(lesFruits.length)]);
-    });
   }
 
   void _fruitClickDetail(Fruit unF) {
@@ -73,7 +69,14 @@ class _FruitMasterState extends State<FruitMaster> {
     ScaffoldMessenger.of(context).showSnackBar(msgSnackBar);
   }
 
-  Fruit fruitDetail = Fruit('', 0, Colors.amber, '');
+  Fruit fruitDetail = Fruit(
+      id: 0,
+      name: '',
+      price: 0,
+      color: Colors.amber,
+      url: '',
+      quantiteStock: 0,
+      season: '');
   List<Fruit> lesFafficher = [];
   late int _selectedIndex = 0;
 
@@ -81,6 +84,20 @@ class _FruitMasterState extends State<FruitMaster> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  Future<List<Fruit>> fetchFruit() async {
+    final response =
+        await http.get(Uri.parse('https://fruits.shrp.dev/items/fruits'));
+
+    if (response.statusCode == 200) {
+      for (var fruit in jsonDecode(response.body)['data']) {
+        lesFruits.add(Fruit.fromJson(fruit));
+      }
+      return lesFruits;
+    } else {
+      throw Exception('Failed to load fruits');
+    }
   }
 
   List<Widget> _widgetOptions() {
@@ -122,7 +139,19 @@ class _FruitMasterState extends State<FruitMaster> {
         title: Text(_title),
         centerTitle: true,
       ),
-      body: _widgetOptions()[_selectedIndex],
+      body: Center(
+        child: FutureBuilder(
+            future: lesFruitsFuture,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                _widgetOptions()[_selectedIndex];
+              } else if (snapshot.hasError) {
+                return Text('${snapshot.error}');
+              }
+
+              return const CircularProgressIndicator();
+            }),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -138,11 +167,11 @@ class _FruitMasterState extends State<FruitMaster> {
         selectedItemColor: Colors.amber[800],
         onTap: _onItemTapped,
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _addFruit(),
-        tooltip: 'Ajout d\'un fruit',
-        child: const Icon(Icons.add),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () => _addFruit(),
+      //   tooltip: 'Ajout d\'un fruit',
+      //   child: const Icon(Icons.add),
+      // ),
     );
   }
 }
