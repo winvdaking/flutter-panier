@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:panier/fruit.dart';
 import 'package:panier/fruitpreview.dart';
+import 'package:panier/providers/cartprovider.dart';
 import 'package:panier/screens/cartscreen.dart';
 import 'package:panier/screens/fruitdetail.dart';
 
@@ -17,12 +18,11 @@ class FruitMaster extends StatefulWidget {
 }
 
 class _FruitMasterState extends State<FruitMaster> {
-  double _total = 0;
-  String _title = 'Total panier : 0€';
+  late CartProvider cart = CartProvider();
+  late String _title = "Total panier : ${cart.totalPrice}€";
   final PageController _pageController = PageController();
   late Future<List<Fruit>> lesFruitsFuture;
   late List<Fruit> lesFruits = [];
-  late Map fruitAuPanier = {};
 
   @override
   void dispose() {
@@ -38,65 +38,50 @@ class _FruitMasterState extends State<FruitMaster> {
 
   void _fruitClickDetail(Fruit unF) {
     setState(() {
-      fruitDetail = unF;
+      cart.setFruitDetail(unF);
       _title = unF.name;
     });
   }
 
-  void _fruitClickRemovePanier(Fruit unF) {
-    setState(() {
-      if (fruitAuPanier.containsKey(unF.name)) {
-        var qte = fruitAuPanier[unF.name][1];
-        if (qte == 1) {
-          fruitAuPanier.remove(unF.name);
-        } else {
-          fruitAuPanier.update(unF.name, (value) => [unF, qte - 1]);
-        }
+  // void _fruitClickRemovePanier(Fruit unF) {
+  //   setState(() {
+  //     if (fruitAuPanier.containsKey(unF.name)) {
+  //       var qte = fruitAuPanier[unF.name][1];
+  //       if (qte == 1) {
+  //         fruitAuPanier.remove(unF.name);
+  //       } else {
+  //         fruitAuPanier.update(unF.name, (value) => [unF, qte - 1]);
+  //       }
 
-        _total = _total - unF.price;
-        _title = "Total panier : $_total€";
-        var msgSnackBar = SnackBar(
-            content: Text("Vous venez de supprimer : ${unF.name} du panier."));
+  //       _total = _total - unF.price;
+  //       _title = "Total panier : $_total€";
+  //       var msgSnackBar = SnackBar(
+  //           content: Text("Vous venez de supprimer : ${unF.name} du panier."));
 
-        ScaffoldMessenger.of(context).showSnackBar(msgSnackBar);
-      }
-    });
-  }
+  //       ScaffoldMessenger.of(context).showSnackBar(msgSnackBar);
+  //     }
+  //   });
+  // }
 
-  void _fruitClickPanier(Fruit unF) {
-    setState(() {
-      if (fruitAuPanier.containsKey(unF.name)) {
-        var qte = fruitAuPanier[unF.name][1];
-        fruitAuPanier.update(unF.name, (value) => [unF, qte + 1]);
-      } else {
-        fruitAuPanier[unF.name] = [unF, 1];
-      }
-      _total = _total + unF.price;
-      _title = "Total panier : $_total€";
-    });
+  // void _fruitClickPanier(Fruit unF) {
+  //   setState(() {
+  //     if (fruitAuPanier.containsKey(unF.name)) {
+  //       var qte = fruitAuPanier[unF.name][1];
+  //       fruitAuPanier.update(unF.name, (value) => [unF, qte + 1]);
+  //     } else {
+  //       fruitAuPanier[unF.name] = [unF, 1];
+  //     }
+  //     _total = _total + unF.price;
+  //     _title = "Total panier : $_total€";
+  //   });
 
-    var msgSnackBar = SnackBar(
-        content: Text("Vous venez d'ajouter : ${unF.name} au panier !"));
+  //   var msgSnackBar = SnackBar(
+  //       content: Text("Vous venez d'ajouter : ${unF.name} au panier !"));
 
-    ScaffoldMessenger.of(context).showSnackBar(msgSnackBar);
-  }
+  //   ScaffoldMessenger.of(context).showSnackBar(msgSnackBar);
+  // }
 
-  Fruit fruitDetail = Fruit(
-      id: 0,
-      name: '',
-      price: 0,
-      color: Colors.amber,
-      url: '',
-      quantiteStock: 0,
-      season: '');
-
-  late int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  final int _selectedIndex = 0;
 
   Future<List<Fruit>> fetchFruit() async {
     final response =
@@ -129,18 +114,10 @@ class _FruitMasterState extends State<FruitMaster> {
                   );
                 }),
           ),
-          Center(
-              child: FruitDetailsScreen(
-            fruit: fruitDetail,
-            pageController: _pageController,
-            addPanier: _fruitClickPanier,
-          )),
+          Center(child: FruitDetailsScreen(unFruit: cart.getFruitDetail())),
         ],
       ),
-      CartScreen(
-          pageController: _pageController,
-          lesFruitsDansLePanier: fruitAuPanier,
-          removeFruitPanier: _fruitClickRemovePanier)
+      CartScreen()
     ];
   }
 
@@ -150,6 +127,11 @@ class _FruitMasterState extends State<FruitMaster> {
       appBar: AppBar(
         title: Text(_title),
         centerTitle: true,
+        leading: const Visibility(
+            visible: true, child: Icon(Icons.arrow_back_ios_new)),
+        actions: const [
+          Visibility(visible: true, child: Icon(Icons.shopping_cart))
+        ],
       ),
       body: Center(
         child: FutureBuilder(
@@ -164,26 +146,6 @@ class _FruitMasterState extends State<FruitMaster> {
               return const CircularProgressIndicator();
             }),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Accueil',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.business),
-            label: 'Panier',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
-        onTap: _onItemTapped,
-      ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () => _addFruit(),
-      //   tooltip: 'Ajout d\'un fruit',
-      //   child: const Icon(Icons.add),
-      // ),
     );
   }
 }

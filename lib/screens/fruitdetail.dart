@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:panier/fruit.dart';
 
+import '../providers/cartprovider.dart';
+
 // ignore: must_be_immutable
 class FruitDetailsScreen extends StatelessWidget {
-  FruitDetailsScreen(
-      {super.key,
-      required this.fruit,
-      required this.pageController,
-      required this.addPanier});
+  FruitDetailsScreen({super.key, required this.unFruit});
 
-  final Fruit fruit;
-  late PageController pageController;
-  final Function addPanier;
+  final CartProvider cart = CartProvider();
+  final Fruit unFruit;
 
   @override
   Widget build(BuildContext context) {
@@ -19,27 +16,21 @@ class FruitDetailsScreen extends StatelessWidget {
       children: [
         Padding(
             padding: const EdgeInsets.all(20),
-            child: Image.asset(fruit.url, height: 50, width: 50)),
-        Padding(padding: const EdgeInsets.all(3), child: Text(fruit.name)),
+            child: Image.asset(unFruit.url, height: 50, width: 50)),
+        Padding(padding: const EdgeInsets.all(3), child: Text(unFruit.name)),
         Padding(
-            padding: const EdgeInsets.all(3), child: Text("${fruit.price}€")),
+            padding: const EdgeInsets.all(3), child: Text("${unFruit.price}€")),
         Padding(
           padding: const EdgeInsets.all(12),
           child: ElevatedButton(
-              onPressed: () => addPanier(fruit),
+              onPressed: () => cart.add(unFruit),
               child: const Text('Ajouter ce fruit au panier')),
         ),
         Padding(
             padding: const EdgeInsets.all(46),
             child: ElevatedButton(
               onPressed: () {
-                if (pageController.hasClients) {
-                  pageController.animateToPage(
-                    0,
-                    duration: const Duration(milliseconds: 400),
-                    curve: Curves.easeInOut,
-                  );
-                }
+                Navigator.push(context, '/' as Route<Object?>);
               },
               child: const Text("Revenir au panier"),
             )),

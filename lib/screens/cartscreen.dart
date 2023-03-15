@@ -1,39 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:panier/fruit.dart';
+import 'package:panier/providers/cartprovider.dart';
 
 // ignore: must_be_immutable
 class CartScreen extends StatelessWidget {
-  CartScreen(
-      {super.key,
-      required this.lesFruitsDansLePanier,
-      required this.pageController,
-      required this.removeFruitPanier});
+  CartScreen({super.key});
 
-  final Map lesFruitsDansLePanier;
-  late PageController pageController;
-  final Function removeFruitPanier;
+  final CartProvider cart = CartProvider();
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: lesFruitsDansLePanier.length,
+      itemCount: cart.fruits.length,
       itemBuilder: (context, index) {
-        List<Fruit> lesFruitsQte = [];
+        // List<Fruit> lesFruitsQte = [];
 
-        lesFruitsDansLePanier.forEach((k, v) {
-          lesFruitsQte.add(v[0]);
-        });
+        // cart.forEach((k, v) {
+        //   lesFruitsQte.add(v[0]);
+        // });
 
-        Fruit currentFruit = lesFruitsQte[index];
-        int qte = lesFruitsDansLePanier[currentFruit.name][1];
+        Fruit currentFruit = cart.fruits[index];
 
         return ListTile(
             tileColor: currentFruit.color,
-            title: Text("${currentFruit.name} ($qte)"),
+            title: Text("${currentFruit.name} ()"),
             hoverColor: const Color.fromRGBO(0, 0, 0, .5),
             leading: Image.asset(currentFruit.url),
             trailing: const Icon(Icons.delete),
-            onTap: () => removeFruitPanier(currentFruit));
+            onTap: () => cart.removeOneFruit(currentFruit));
       },
     );
   }
