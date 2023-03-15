@@ -9,7 +9,7 @@ class CartScreen extends StatelessWidget {
       required this.pageController,
       required this.removeFruitPanier});
 
-  final List<Fruit> lesFruitsDansLePanier;
+  final Map lesFruitsDansLePanier;
   late PageController pageController;
   final Function removeFruitPanier;
 
@@ -18,10 +18,18 @@ class CartScreen extends StatelessWidget {
     return ListView.builder(
       itemCount: lesFruitsDansLePanier.length,
       itemBuilder: (context, index) {
-        final Fruit currentFruit = lesFruitsDansLePanier[index];
+        List<Fruit> lesFruitsQte = [];
+
+        lesFruitsDansLePanier.forEach((k, v) {
+          lesFruitsQte.add(v[0]);
+        });
+
+        Fruit currentFruit = lesFruitsQte[index];
+        int qte = lesFruitsDansLePanier[currentFruit.name][1];
+
         return ListTile(
             tileColor: currentFruit.color,
-            title: Text(currentFruit.name),
+            title: Text("${currentFruit.name} ($qte)"),
             hoverColor: const Color.fromRGBO(0, 0, 0, .5),
             leading: Image.asset(currentFruit.url),
             trailing: const Icon(Icons.delete),

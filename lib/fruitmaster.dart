@@ -22,7 +22,7 @@ class _FruitMasterState extends State<FruitMaster> {
   final PageController _pageController = PageController();
   late Future<List<Fruit>> lesFruitsFuture;
   late List<Fruit> lesFruits = [];
-  late List<Fruit> fruitAuPanier = [];
+  late Map fruitAuPanier = {};
 
   @override
   void dispose() {
@@ -32,8 +32,8 @@ class _FruitMasterState extends State<FruitMaster> {
 
   @override
   void initState() {
-    lesFruitsFuture = fetchFruit();
     super.initState();
+    lesFruitsFuture = fetchFruit();
   }
 
   void _fruitClickDetail(Fruit unF) {
@@ -45,8 +45,8 @@ class _FruitMasterState extends State<FruitMaster> {
 
   void _fruitClickRemovePanier(Fruit unF) {
     setState(() {
-      if (fruitAuPanier.contains(unF)) {
-        fruitAuPanier.remove(unF);
+      if (fruitAuPanier.containsKey(unF.name)) {
+        fruitAuPanier.remove(unF.name);
         _total = _total - unF.price;
         _title = "Total panier : $_total€";
         var msgSnackBar = SnackBar(
@@ -59,10 +59,16 @@ class _FruitMasterState extends State<FruitMaster> {
 
   void _fruitClickPanier(Fruit unF) {
     setState(() {
-      fruitAuPanier.add(unF);
+      if (fruitAuPanier.containsKey(unF.name)) {
+        var qte = fruitAuPanier[unF.name][1];
+        fruitAuPanier.update(unF.name, (value) => [unF, qte + 1]);
+      } else {
+        fruitAuPanier[unF.name] = [unF, 1];
+      }
       _total = _total + unF.price;
       _title = "Total panier : $_total€";
     });
+
     var msgSnackBar = SnackBar(
         content: Text("Vous venez d'ajouter : ${unF.name} au panier !"));
 
@@ -94,6 +100,7 @@ class _FruitMasterState extends State<FruitMaster> {
       for (var fruit in jsonDecode(response.body)['data']) {
         lesFruits.add(Fruit.fromJson(fruit));
       }
+      lesFafficher = lesFruits;
       return lesFruits;
     } else {
       throw Exception('Failed to load fruits');
@@ -144,7 +151,7 @@ class _FruitMasterState extends State<FruitMaster> {
             future: lesFruitsFuture,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                _widgetOptions()[_selectedIndex];
+                return _widgetOptions()[_selectedIndex];
               } else if (snapshot.hasError) {
                 return Text('${snapshot.error}');
               }
