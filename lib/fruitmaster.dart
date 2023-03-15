@@ -89,7 +89,7 @@ class _FruitMasterState extends State<FruitMaster> {
       url: '',
       quantiteStock: 0,
       season: '');
-  List<Fruit> lesFafficher = [];
+
   late int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
@@ -106,23 +106,22 @@ class _FruitMasterState extends State<FruitMaster> {
       for (var fruit in jsonDecode(response.body)['data']) {
         lesFruits.add(Fruit.fromJson(fruit));
       }
-      lesFafficher = lesFruits;
       return lesFruits;
     } else {
       throw Exception('Failed to load fruits');
     }
   }
 
-  List<Widget> _widgetOptions() {
+  List<Widget> _widgetOptions(data) {
     return [
       PageView(
         controller: _pageController,
         children: [
           Center(
             child: ListView.builder(
-                itemCount: lesFafficher.length,
+                itemCount: data.length,
                 itemBuilder: (context, index) {
-                  final Fruit currentFruit = lesFafficher[index];
+                  final Fruit currentFruit = data[index];
                   return FruitPreview(
                     unFruit: currentFruit,
                     onFruitClick: _fruitClickDetail,
@@ -157,7 +156,7 @@ class _FruitMasterState extends State<FruitMaster> {
             future: lesFruitsFuture,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return _widgetOptions()[_selectedIndex];
+                return _widgetOptions(snapshot.data)[_selectedIndex];
               } else if (snapshot.hasError) {
                 return Text('${snapshot.error}');
               }
