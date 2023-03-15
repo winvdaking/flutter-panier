@@ -46,7 +46,13 @@ class _FruitMasterState extends State<FruitMaster> {
   void _fruitClickRemovePanier(Fruit unF) {
     setState(() {
       if (fruitAuPanier.containsKey(unF.name)) {
-        fruitAuPanier.remove(unF.name);
+        var qte = fruitAuPanier[unF.name][1];
+        if (qte == 1) {
+          fruitAuPanier.remove(unF.name);
+        } else {
+          fruitAuPanier.update(unF.name, (value) => [unF, qte - 1]);
+        }
+
         _total = _total - unF.price;
         _title = "Total panier : $_total€";
         var msgSnackBar = SnackBar(
