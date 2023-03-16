@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:panier/fruit.dart';
+import 'package:panier/class/fruit.dart';
 import 'package:panier/fruitpreview.dart';
 import 'package:panier/providers/cartprovider.dart';
 import 'dart:convert';
@@ -22,8 +22,8 @@ class _FruitMasterState extends State<FruitMaster> {
 
   Future<List<Fruit>> _fetchApi() async {
     final List<Fruit> fruits = [];
-    final response =
-        await http.get(Uri.parse('https://fruits.shrp.dev/items/fruits'));
+    final response = await http
+        .get(Uri.parse('https://fruits.shrp.dev/items/fruits?fields=*.*'));
 
     if (response.statusCode == 200) {
       for (var fruit in jsonDecode(response.body)['data']) {

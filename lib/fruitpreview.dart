@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:panier/providers/cartprovider.dart';
 import 'package:panier/screens/fruitdetail.dart';
 import 'package:provider/provider.dart';
-import 'fruit.dart';
+import 'class/fruit.dart';
 
 class FruitPreview extends StatelessWidget {
   const FruitPreview({super.key, required this.unFruit});

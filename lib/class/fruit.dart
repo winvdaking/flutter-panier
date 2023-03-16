@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:panier/class/origin.dart';
 
 class Fruit {
   final int id;
@@ -8,15 +9,18 @@ class Fruit {
   final String url;
   final int quantiteStock;
   final String season;
+  final Origin origin;
 
-  Fruit(
-      {required this.id,
-      required this.name,
-      required this.price,
-      required this.color,
-      required this.url,
-      required this.quantiteStock,
-      required this.season});
+  Fruit({
+    required this.id,
+    required this.name,
+    required this.price,
+    required this.color,
+    required this.url,
+    required this.quantiteStock,
+    required this.season,
+    required this.origin,
+  });
 
   factory Fruit.fromJson(Map<String, dynamic> json) {
     return Fruit(
@@ -26,7 +30,13 @@ class Fruit {
         quantiteStock: json['stock'],
         url: "../images/${json['image']}",
         price: json['price'],
-        season: json['season']);
+        season: json['season'],
+        origin: Origin(
+            id: json['origin']['id'],
+            name: json['origin']['name'],
+            location: Location(
+                type: json['origin']['location']['type'],
+                coordinates: json['origin']['location']['coordinates'])));
   }
 
   static int _getColorFromHex(String hexColor) {

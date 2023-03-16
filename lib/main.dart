@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:panier/fruit.dart';
+import 'package:panier/class/fruit.dart';
 import 'package:panier/fruitmaster.dart';
 import 'package:panier/screens/cartscreen.dart';
 import 'package:provider/provider.dart';

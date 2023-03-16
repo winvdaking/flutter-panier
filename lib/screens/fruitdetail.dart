@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:panier/fruit.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:panier/class/fruit.dart';
 import 'package:panier/providers/cartprovider.dart';
 import 'package:provider/provider.dart';
 
@@ -35,7 +37,7 @@ class FruitDetailsScreen extends StatelessWidget {
           children: [
             Padding(
                 padding: const EdgeInsets.all(20),
-                child: Image.asset(unFruit.url, height: 50, width: 50)),
+                child: Image.asset(unFruit.url, height: 100, width: 100)),
             Padding(
                 padding: const EdgeInsets.all(3), child: Text(unFruit.name)),
             Padding(
@@ -53,6 +55,43 @@ class FruitDetailsScreen extends StatelessWidget {
                     ScaffoldMessenger.of(context).showSnackBar(msg);
                   },
                   child: const Text('Ajouter ce fruit au panier')),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(50),
+              child: SizedBox(
+                height: 250,
+                child: FlutterMap(
+                  options: MapOptions(
+                    center: LatLng(unFruit.origin.location.coordinates[1],
+                        unFruit.origin.location.coordinates[0]),
+                    zoom: 9.2,
+                  ),
+                  nonRotatedChildren: [
+                    AttributionWidget.defaultWidget(
+                      source: 'OpenStreetMap contributors',
+                      onSourceTapped: null,
+                    ),
+                  ],
+                  children: [
+                    TileLayer(
+                      urlTemplate:
+                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      userAgentPackageName: unFruit.name,
+                    ),
+                    MarkerLayer(
+                      markers: [
+                        Marker(
+                            point: LatLng(
+                                unFruit.origin.location.coordinates[1],
+                                unFruit.origin.location.coordinates[0]),
+                            builder: (BuildContext context) {
+                              return const Icon(Icons.location_on);
+                            })
+                      ],
+                    )
+                  ],
+                ),
+              ),
             )
           ],
         ),
