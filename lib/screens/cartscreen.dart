@@ -14,7 +14,7 @@ class CartScreen extends StatelessWidget {
     var cart = context.watch<CartProvider>();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Panier'),
+        title: Text("Total panier : ${cart.totalPrice}€"),
         centerTitle: true,
         leading: IconButton(
           onPressed: () {

@@ -5,12 +5,15 @@ import 'package:provider/provider.dart';
 import 'class/fruit.dart';
 
 class FruitPreview extends StatelessWidget {
-  const FruitPreview({super.key, required this.unFruit});
+  FruitPreview({super.key, required this.unFruit});
+
+  CartProvider cart = CartProvider();
 
   final Fruit unFruit;
 
   @override
   Widget build(BuildContext context) {
+    var cart = context.watch<CartProvider>();
     return ListTile(
       tileColor: unFruit.color,
       title: Text(unFruit.name),
@@ -28,7 +31,16 @@ class FruitPreview extends StatelessWidget {
           ),
         );
       },
-      trailing: const Icon(Icons.more_vert),
+      trailing: IconButton(
+        onPressed: () {
+          cart.add(unFruit);
+          var msg = SnackBar(
+            content: Text("${unFruit.name} vient d'être ajouté(e) au panier !"),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(msg);
+        },
+        icon: const Icon(Icons.add_circle_outline_outlined),
+      ),
     );
   }
 }

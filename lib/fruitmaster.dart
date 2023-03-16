@@ -17,7 +17,7 @@ class FruitMaster extends StatefulWidget {
 
 class _FruitMasterState extends State<FruitMaster> {
   late CartProvider cart = CartProvider();
-  final String _title = "Total panier : €";
+  final String _title = "Flutter Panier";
   late Future<List<Fruit>> lesFruitsFuture = _fetchApi();
 
   Future<List<Fruit>> _fetchApi() async {
