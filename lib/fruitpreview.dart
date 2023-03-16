@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:panier/providers/cartprovider.dart';
+import 'package:panier/screens/fruitdetail.dart';
+import 'package:provider/provider.dart';
 import 'fruit.dart';
 
 class FruitPreview extends StatelessWidget {
-  const FruitPreview(
-      {super.key,
-      required this.unFruit,
-      required this.onFruitClick,
-      required this.pageController});
+  const FruitPreview({super.key, required this.unFruit});
 
   final Fruit unFruit;
-  final Function onFruitClick;
-  final PageController pageController;
 
   @override
   Widget build(BuildContext context) {
@@ -20,14 +17,16 @@ class FruitPreview extends StatelessWidget {
       hoverColor: const Color.fromRGBO(0, 0, 0, .5),
       leading: Image.asset(unFruit.url),
       onTap: () {
-        if (pageController.hasClients) {
-          pageController.animateToPage(
-            1,
-            duration: const Duration(milliseconds: 400),
-            curve: Curves.easeInOut,
-          );
-        }
-        onFruitClick(unFruit);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Consumer<CartProvider>(
+              builder: (context, cart, child) {
+                return FruitDetailsScreen(unFruit: unFruit);
+              },
+            ),
+          ),
+        );
       },
       trailing: const Icon(Icons.more_vert),
     );
