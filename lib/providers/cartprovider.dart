@@ -25,4 +25,16 @@ class CartProvider extends ChangeNotifier {
     _fruits.remove(unFruit);
     notifyListeners();
   }
+
+  int nbFruitInCart(Fruit unFruit) {
+    int nb = 0;
+
+    for (var fruit in _fruits) {
+      if (fruit == unFruit) {
+        nb++;
+      }
+    }
+
+    return nb;
+  }
 }

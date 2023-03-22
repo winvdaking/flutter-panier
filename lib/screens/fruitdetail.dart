@@ -43,6 +43,8 @@ class FruitDetailsScreen extends StatelessWidget {
             Padding(
                 padding: const EdgeInsets.all(3),
                 child: Text("${unFruit.price}€")),
+                Padding(padding: const EdgeInsets.all(3),
+                child: ),
             Padding(
               padding: const EdgeInsets.all(12),
               child: ElevatedButton(
