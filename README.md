@@ -1,4 +1,4 @@
-# Panier flutter pour projet d'étude
+# Panier Flutter pour projet d'étude
 
 A new Flutter project.
 
@@ -21,4 +21,5 @@ samples, guidance on mobile development, and a full API reference.
 
 ---
 Winv aka Dorian
+
 Aller PARIS
