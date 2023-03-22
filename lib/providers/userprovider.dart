@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:panier/class/fruit.dart';
 
-class CartProvider extends ChangeNotifier {
+class UserProvider extends ChangeNotifier {
   final List<Fruit> _fruits = [];
 
   List<Fruit> get fruits => _fruits;

@@ -19,6 +19,8 @@ class _FruitMasterState extends State<FruitMaster> {
   late CartProvider cart = CartProvider();
   final String _title = "Flutter Panier";
   late Future<List<Fruit>> lesFruitsFuture = _fetchApi();
+  late List<String> lesSaisons = ['Tous'];
+  late String seasonSelected = lesSaisons[0];
 
   Future<List<Fruit>> _fetchApi() async {
     final List<Fruit> fruits = [];
@@ -29,10 +31,34 @@ class _FruitMasterState extends State<FruitMaster> {
       for (var fruit in jsonDecode(response.body)['data']) {
         fruits.add(Fruit.fromJson(fruit));
       }
+
+      for (var fruit in fruits) {
+        if (!lesSaisons.contains(fruit.season)) {
+          lesSaisons.add(fruit.season);
+        }
+      }
     } else {
       throw Exception('Failed to load fruits');
     }
     return fruits;
+  }
+
+  void fruitFiltreChanged(value) {
+    setState(() {
+      lesFruitsFuture = _fetchApi();
+      if (value == 'Tous') {
+        seasonSelected = lesSaisons[0];
+      } else {
+        seasonSelected = value;
+        lesFruitsFuture.then((fruits) {
+          for (var fruit in fruits) {
+            if (fruit.season.toLowerCase() != value.toString().toLowerCase()) {
+              fruits.remove(fruit);
+            }
+          }
+        });
+      }
+    });
   }
 
   @override
@@ -41,7 +67,27 @@ class _FruitMasterState extends State<FruitMaster> {
       appBar: AppBar(
         title: Text(_title),
         centerTitle: true,
+        leading: IconButton(
+            icon: const Icon(Icons.account_circle_rounded),
+            onPressed: () => Navigator.pushNamed(context, '/login')),
         actions: [
+          DropdownButton<String>(
+              value: seasonSelected,
+              icon: const Icon(Icons.arrow_downward),
+              elevation: 16,
+              underline: Container(
+                height: 2,
+                color: Colors.white,
+              ),
+              onChanged: (String? value) {
+                fruitFiltreChanged(value);
+              },
+              items: lesSaisons.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList()),
           IconButton(
             onPressed: () {
               Navigator.pushNamed(context, '/panier');

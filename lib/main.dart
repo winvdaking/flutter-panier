@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:panier/class/fruit.dart';
+import 'package:panier/forms/login.dart';
 import 'package:panier/fruitmaster.dart';
 import 'package:panier/screens/cartscreen.dart';
 import 'package:provider/provider.dart';
 import 'package:panier/providers/cartprovider.dart';
+import 'package:panier/forms/register.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,6 +35,8 @@ class MyApp extends StatelessWidget {
                 return CartScreen();
               },
             ),
+        '/register': (context) => const RegisterForm(),
+        '/login': (context) => const LoginForm(),
       },
       title: 'Flutter Panier',
       theme: ThemeData(

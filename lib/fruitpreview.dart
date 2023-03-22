@@ -4,6 +4,7 @@ import 'package:panier/screens/fruitdetail.dart';
 import 'package:provider/provider.dart';
 import 'class/fruit.dart';
 
+// ignore: must_be_immutable
 class FruitPreview extends StatelessWidget {
   FruitPreview({super.key, required this.unFruit});
 

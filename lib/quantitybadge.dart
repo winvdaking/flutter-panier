@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:panier/providers/cartprovider.dart';
+import 'package:provider/provider.dart';
 
 import 'class/fruit.dart';
 
@@ -12,10 +13,7 @@ class QuantityBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Badge(
-      backgroundColor: Colors.red,
-      textColor: Colors.white,
-      child: Text(cart.nbFruitInCart(unFruit) as String),
-    );
+    var cart = context.watch<CartProvider>();
+    return Text(cart.nbFruitInCart(unFruit));
   }
 }

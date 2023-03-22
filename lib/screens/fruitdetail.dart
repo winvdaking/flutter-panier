@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:panier/class/fruit.dart';
 import 'package:panier/providers/cartprovider.dart';
+import 'package:panier/quantitybadge.dart';
 import 'package:provider/provider.dart';
 
 class FruitDetailsScreen extends StatelessWidget {
@@ -37,14 +38,28 @@ class FruitDetailsScreen extends StatelessWidget {
           children: [
             Padding(
                 padding: const EdgeInsets.all(20),
-                child: Image.asset(unFruit.url, height: 100, width: 100)),
+                child: Image.asset(unFruit.url, height: 80, width: 80)),
             Padding(
                 padding: const EdgeInsets.all(3), child: Text(unFruit.name)),
             Padding(
                 padding: const EdgeInsets.all(3),
                 child: Text("${unFruit.price}€")),
-                Padding(padding: const EdgeInsets.all(3),
-                child: ),
+            Padding(
+                padding: const EdgeInsets.all(3), child: Text(unFruit.season)),
+            Padding(
+              padding: const EdgeInsets.all(3),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("Quantité dans le panier : "),
+                  Consumer<CartProvider>(
+                    builder: (context, cart, child) {
+                      return QuantityBadge(unFruit: unFruit);
+                    },
+                  )
+                ],
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.all(12),
               child: ElevatedButton(
