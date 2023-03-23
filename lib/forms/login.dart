@@ -45,7 +45,6 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
-    var user = context.watch<UserProvider>();
     return Scaffold(
       appBar: AppBar(
         title: const Text("Flutter Inscription"),

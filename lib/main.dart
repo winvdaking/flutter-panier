@@ -52,9 +52,21 @@ class MyApp extends StatelessWidget {
                 );
               },
             ),
-        '/register': (context) => const RegisterForm(),
-        '/login': (context) => const LoginForm(),
-        '/logout': (context) => const LogoutForm(),
+        '/register': (context) => Consumer<UserProvider>(
+              builder: (context, user, child) {
+                return const RegisterForm();
+              },
+            ),
+        '/login': (context) => Consumer<UserProvider>(
+              builder: (context, user, child) {
+                return const LoginForm();
+              },
+            ),
+        '/logout': (context) => Consumer<UserProvider>(
+              builder: (context, user, child) {
+                return const LogoutForm();
+              },
+            ),
       },
       title: 'Flutter Panier',
       theme: ThemeData(
