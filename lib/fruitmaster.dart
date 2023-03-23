@@ -4,6 +4,7 @@ import 'package:panier/fruitpreview.dart';
 import 'package:panier/providers/cartprovider.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:panier/providers/userprovider.dart';
 import 'package:provider/provider.dart';
 
 class FruitMaster extends StatefulWidget {
@@ -16,7 +17,10 @@ class FruitMaster extends StatefulWidget {
 }
 
 class _FruitMasterState extends State<FruitMaster> {
+  /// Providers
   late CartProvider cart = CartProvider();
+  late UserProvider user = UserProvider();
+
   final String _title = "Flutter Panier";
   late Future<List<Fruit>> lesFruitsFuture = _fetchApi();
   late List<String> lesSaisons = ['Tous'];
@@ -71,6 +75,18 @@ class _FruitMasterState extends State<FruitMaster> {
             icon: const Icon(Icons.account_circle_rounded),
             onPressed: () => Navigator.pushNamed(context, '/login')),
         actions: [
+          user.isValid()
+              ? Consumer<UserProvider>(
+                  builder: (context, cart, child) {
+                    return TextButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/logout');
+                      },
+                      child: Text(user.currentUser!.email),
+                    );
+                  },
+                )
+              : Container(),
           DropdownButton<String>(
               value: seasonSelected,
               icon: const Icon(Icons.arrow_downward),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:panier/class/fruit.dart';
 import 'package:panier/forms/login.dart';
+import 'package:panier/forms/logout.dart';
 import 'package:panier/fruitmaster.dart';
+import 'package:panier/providers/userprovider.dart';
 import 'package:panier/screens/cartscreen.dart';
 import 'package:provider/provider.dart';
 import 'package:panier/providers/cartprovider.dart';
@@ -9,8 +11,11 @@ import 'package:panier/forms/register.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(ChangeNotifierProvider(
-    create: (context) => CartProvider(),
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (context) => UserProvider()),
+      ChangeNotifierProvider(create: (context) => CartProvider()),
+    ],
     child: MyApp(),
   ));
 }
@@ -28,15 +33,28 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: '/',
       routes: {
-        '/': (context) =>
-            FruitMaster(title: 'Total panier : 0€', lesFruits: fruits),
+        '/': (context) => Consumer<CartProvider>(
+              builder: (context, cart, child) {
+                return Consumer<UserProvider>(
+                  builder: (context, user, child) {
+                    return FruitMaster(
+                        title: 'Total panier : 0€', lesFruits: fruits);
+                  },
+                );
+              },
+            ),
         '/panier': (context) => Consumer<CartProvider>(
               builder: (context, cart, child) {
-                return CartScreen();
+                return Consumer<UserProvider>(
+                  builder: (context, user, child) {
+                    return CartScreen();
+                  },
+                );
               },
             ),
         '/register': (context) => const RegisterForm(),
         '/login': (context) => const LoginForm(),
+        '/logout': (context) => const LogoutForm(),
       },
       title: 'Flutter Panier',
       theme: ThemeData(

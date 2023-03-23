@@ -1,7 +1,8 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:panier/providers/userprovider.dart';
+import 'package:provider/provider.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -14,6 +15,8 @@ class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
+  UserProvider user = UserProvider();
 
   _signIn(email, password) async {
     try {
@@ -28,8 +31,13 @@ class _LoginFormState extends State<LoginForm> {
         }),
       );
 
-      print(jsonDecode(utf8.decode(response.bodyBytes)) as Map);
-      return response;
+      var resp = jsonDecode(utf8.decode(response.bodyBytes));
+
+      var data = resp['data'];
+
+      user.setCurrentUser(data, email, password);
+
+      return data;
     } catch (e) {
       throw Exception(e);
     }
@@ -37,6 +45,7 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
+    var user = context.watch<UserProvider>();
     return Scaffold(
       appBar: AppBar(
         title: const Text("Flutter Inscription"),
@@ -109,8 +118,7 @@ class _LoginFormState extends State<LoginForm> {
                       passwordController.text,
                     );
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Processing Data : $response')),
-                    );
+                        const SnackBar(content: Text("Bienvenue !")));
                   }
                 },
                 child: const Text("Se connecter"),

@@ -37,4 +37,12 @@ class CartProvider extends ChangeNotifier {
 
     return nb.toString();
   }
+
+  List<int> getFruitsId() {
+    List<int> ids = [];
+    for (var fruit in _fruits) {
+      ids.add(fruit.id);
+    }
+    return ids;
+  }
 }

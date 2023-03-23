@@ -1,40 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:panier/class/fruit.dart';
+import 'package:panier/class/user.dart';
+import 'package:jwt_decode/jwt_decode.dart';
 
 class UserProvider extends ChangeNotifier {
-  final List<Fruit> _fruits = [];
+  User? _user;
 
-  List<Fruit> get fruits => _fruits;
+  User? get currentUser => _user;
 
-  double get totalPrice => _fruits.fold<double>(
-      0, (previousValue, element) => previousValue + element.price);
+  void setCurrentUser(data, email, password) {
+    var response = Jwt.parseJwt(data['access_token']);
 
-  void add(Fruit unFruit) {
-    _fruits.add(unFruit);
+    _user = User(
+      id: response['id'],
+      email: email,
+      password: password,
+      expires: data['expires'],
+      accessToken: data['access_token'],
+      refreshToken: data['refresh_token'],
+      role: response['role'],
+    );
+
+    print(_user);
+
     notifyListeners();
   }
 
-  /// Removes all fruits from the cart.
-  void removeAll() {
-    _fruits.clear();
-    notifyListeners();
+  bool isValid() {
+    return _user?.accessToken != null ? true : false;
   }
 
-  /// Remove one fruit from the cart
-  void removeOneFruit(Fruit unFruit) {
-    _fruits.remove(unFruit);
-    notifyListeners();
-  }
-
-  String nbFruitInCart(Fruit unFruit) {
-    int nb = 0;
-
-    for (var fruit in _fruits) {
-      if (fruit == unFruit) {
-        nb++;
-      }
-    }
-
-    return nb.toString();
-  }
+  String? getAccessToken() => _user?.accessToken;
 }

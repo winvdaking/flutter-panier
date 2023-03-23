@@ -29,7 +29,6 @@ class _RegisterFormState extends State<RegisterForm> {
         }),
       );
 
-      print(jsonDecode(utf8.decode(response.bodyBytes)) as Map);
       return response;
     } catch (e) {
       throw Exception(e);
@@ -101,7 +100,7 @@ class _RegisterFormState extends State<RegisterForm> {
                         passwordController.text,
                         "ca2c1507-d542-4f47-bb63-a9c44a536498");
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Processing Data : $response')),
+                      const SnackBar(content: Text('Inscription OK')),
                     );
                   }
                 },
